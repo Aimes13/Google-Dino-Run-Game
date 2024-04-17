@@ -123,13 +123,13 @@ function Game(width, height) {
     this.gameOver = false;
 
     window.addEventListener('keydown', (e) => {
-        if(e.keyCode == 38 || e.keyCode == 32) {
+        if(e.key === "ArrowUp" || e.key === " ") {
             if (this.player.vertical == 0) {
                 this.player.vertical = -13;
                 this.player.jump = true;
             }
         }
-        if(e.keyCode == 40) {
+        if(e.key === "ArrowDown") {
             if (this.player.jump) {
                 this.player.vertical = 10;
             }
@@ -218,7 +218,7 @@ const animate = (timeStamp) => {
 };
 
 window.addEventListener('keydown', (e) => {
-    if(e.keyCode == 13) { 
+    if(e.key == "Enter") { 
         if (game.gameRunning == false) {
             game.gameRunning = true;
             animate(0);
@@ -231,7 +231,7 @@ window.addEventListener('keydown', (e) => {
         }
     }
 
-    if (e.keyCode === 27) {
+    if (e.key === "Escape") {
         let userInput;
         do {
             userInput = prompt(`Do you want to exit the game? \n Respond with 'Y' or 'N'`);
