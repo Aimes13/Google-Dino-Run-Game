@@ -22,6 +22,8 @@ GameDesign.prototype.draw = function (context) {
         context.fillText("Game Over", this.x, this.y);
         context.font = this.fontSize + "px " + this.fontFamily;
         context.fillText("score: " + this.game.time, this.x, this.y + 20);
+        context.font = this.fontSize * 1.2 + "px " + this.fontFamily;
+        context.fillText(`Press \"Enter\" to play again`, this.x, this.y + 50);
     } else {
         context.fillStyle = this.color;
         context.textAlign = "right";
@@ -189,8 +191,8 @@ Game.prototype.checkCollision = function (object1, object2) {
 const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 600;
-canvas.height = 150;
+canvas.width = 1000;
+canvas.height = 250;
 
 ctx.save();
 
