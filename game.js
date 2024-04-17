@@ -32,3 +32,37 @@ gameDesign.prototype.draw = function (context) {
 
     context.restore();
 };
+
+function player(game) {
+    this.game = game;
+
+    this.width = 40;
+    this.height = 40;
+
+    this.x = 40;
+    this.y = game.height - this.height;
+    //vertical move
+    this.vertical = 0;
+    this.jump = false;
+
+    this.draw = function(context) {
+        context.save();
+
+        context.fillStyle = "black";
+        context.fillRect(this.x, this.y, this.width, this.height);
+
+        context.restore();
+    };
+
+    this.update = function() {
+        if (this.jump === true) {
+            this.y += this.vertical;
+            this.vertical += this.game.gravity;
+            if (this.y > canvas.height - this.height) {
+                this.y = canvas.height - this.height;
+                this.vertical = 0;
+                this.jump = false;
+            }
+        }
+    };
+}
