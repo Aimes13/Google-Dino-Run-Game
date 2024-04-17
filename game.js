@@ -185,3 +185,35 @@ game.prototype.checkCollision = function (object1, object2) {
         object1.height + object1.y > object2.y
     )
 };
+
+const canvas = document.querySelector("#canvas");
+const context = canvas.getContext("2d");
+
+canvas.width = 600;
+canvas.height = 150;
+
+context.save();
+
+context.fillStyle = "black";
+context.textAlign = "center";
+context.textBaseline = "middle";
+context.font = `${24}px Helvetica`;
+context.fillText(`Press \"Enter\"" to play`, canvas.width / 2, canvas.height / 2);
+
+context.restore();
+
+let newGame = game(canvas.width, canvas.height);
+let lastTime = 0;
+
+const animate = (timeStamp) => {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (!newGame.gameOver) requestAnimationFrame(animate);
+
+    newGame.draw(context);
+    newGame.update();
+};
+
