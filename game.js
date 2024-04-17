@@ -230,4 +230,19 @@ window.addEventListener('keydown', (e) => {
             animate(0);
         }
     }
+
+    if (e.keyCode === 27) {
+        let userInput;
+        do {
+            userInput = prompt(`Do you want to exit the game? \n Respond with 'Y' or 'N'`);
+            if (userInput === null) {
+                return; // Exit if the user cancels the prompt
+            }
+            userInput = userInput.trim().toUpperCase();
+        } while (userInput !== 'Y' && userInput !== 'N');
+        
+        if (userInput === 'Y') {
+            window.location.reload();
+        }
+    }
 });
