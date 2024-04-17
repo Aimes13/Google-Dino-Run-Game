@@ -27,7 +27,7 @@ gameDesign.prototype.draw = function (context) {
         context.textAlign = "right";
         context.font = this.fontSize + "px " + this.fontFamily;
         context.fillText(this.game.time, this.x, this.y);
-        context.fillText("lv: " + this.game.lvl, this.x, this.y + 12);
+        context.fillText("lv: " + this.game.level, this.x, this.y + 12);
     }
 
     context.restore();
@@ -101,4 +101,87 @@ playerEnemy.prototype.update = function () {
     if (this.x + this.width < 0) {
         this.markedForDeletion = true;
     }
+};
+
+function game(width, height) {
+    this.width = width;
+    this.height = height;
+
+    this.time = 0;
+    this.gravity = 1;
+    this.level = 1;
+    this.keys = [];
+
+    this.ui = gameDesign(this);
+    this.player = player(this);
+
+    this.enemyTimer = Math.random() * 100;
+    this.enemyRespawn = 100;
+    this.enemies = [];
+
+    this.gameRunning = false;
+    this.gameOver = false;
+
+    window.addEventListener('keydown', (e) => {
+        if(e.keyCode == 38 || e.keyCode == 32) {
+            if (this.player.vertical == 0) {
+                this.player.vertical = -13
+                this.player.jump = true
+            }
+        }
+        if(e.keyCode == 40) {
+            if (this.player.jump = true) {
+                this.player.vertical = 10
+            }
+        }
+    });
+}
+
+game.prototype.draw = function (context) {
+    this.ui.draw(context)
+    this.player.draw(context)
+    this.enemies.forEach(enemy => {
+        enemy.draw(context)
+    });
+};
+
+game.prototype.update = function () {
+    if (!this.gameOver) {
+        //Level cap
+        if(this.time > this.level * 500) {
+            this.level++
+        }
+        //Create player enemies
+        if (this.enemyTimer < this.enemyRespawn) {
+            this.enemyTimer++
+        } else {
+            if (this.level < 3) {
+                this.enemies.push(playerEnemy(this, "ground"))
+            } else if (Math.random() < 0.7) this.enemies.push(playerEnemy(this, "ground"))
+            else this.enemies.push(playerEnemy(this, "air"))
+
+            this.enemyTimer = Math.random() * 50 * (this.level * 0.1 + 1)
+        }
+        //Update game progress
+        this.player.update()
+        this.enemies.forEach(enemy => {
+            enemy.update()
+            if (this.checkCollision(this.player, enemy)) {
+                this.gameOver = true
+            }
+        })
+        //Clear enemies
+        this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
+        //Update game time
+        this.time++
+    }
+};
+
+game.prototype.checkCollision = function (object1, object2) {
+    return (
+        object1.x < object2.x + object2.width &&
+        object1.x + object1.width > object2.x &&
+        object1.y < object2.y + object2.height &&
+        object1.height + object1.y > object2.y
+    )
 };
