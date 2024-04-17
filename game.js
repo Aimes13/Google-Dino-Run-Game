@@ -7,7 +7,7 @@ function gameDesign(game) {
 
     this.x = this.game.width - 20;
     this.y = 20;
-}
+};
 
 gameDesign.prototype.draw = function (context) {
     context.save();
@@ -41,7 +41,7 @@ function player(game) {
 
     this.x = 40;
     this.y = game.height - this.height;
-    //vertical move
+    //To move up and down (vertically)
     this.vertical = 0;
     this.jump = false;
 
@@ -65,4 +65,40 @@ function player(game) {
             }
         }
     };
-}
+};
+
+function playerEnemy(game, type) {
+    this.game = game;
+
+    this.type = type;
+    this.markedForDeletion = false;
+
+    this.width = 60;
+    this.height = 40;
+
+    this.x = this.game.width;
+    if (this.type === "ground") {
+        this.y = this.game.height - this.height;
+    } else {
+        this.y = 40;
+    }
+
+    //To move left and right (horizontally)
+    this.horizontal = 7 * (this.game.lvl * 0.2 + 1);
+};
+
+playerEnemy.prototype.draw = function (context) {
+    context.save();
+
+    context.fillStyle = "red";
+    context.fillRect(this.x, this.y, this.width, this.height);
+
+    context.restore();
+};
+
+playerEnemy.prototype.update = function () {
+    this.x -= this.horizontal;
+    if (this.x + this.width < 0) {
+        this.markedForDeletion = true;
+    }
+};
