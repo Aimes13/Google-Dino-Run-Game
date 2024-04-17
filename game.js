@@ -44,17 +44,18 @@ function player(game) {
     //To move up and down (vertically)
     this.vertical = 0;
     this.jump = false;
+};
 
-    this.draw = function(context) {
+player.prototype.draw = function(context) {
         context.save();
 
         context.fillStyle = "black";
         context.fillRect(this.x, this.y, this.width, this.height);
 
         context.restore();
-    };
+};
 
-    this.update = function() {
+player.prototype.update = function() {
         if (this.jump === true) {
             this.y += this.vertical;
             this.vertical += this.game.gravity;
@@ -64,7 +65,6 @@ function player(game) {
                 this.jump = false;
             }
         }
-    };
 };
 
 function playerEnemy(game, type) {
@@ -112,8 +112,8 @@ function game(width, height) {
     this.level = 1;
     this.keys = [];
 
-    this.ui = gameDesign(this);
-    this.player = player(this);
+    this.gamedesign = new gameDesign(this);
+    this.player = new player(this);
 
     this.enemyTimer = Math.random() * 100;
     this.enemyRespawn = 100;
@@ -125,23 +125,23 @@ function game(width, height) {
     window.addEventListener('keydown', (e) => {
         if(e.keyCode == 38 || e.keyCode == 32) {
             if (this.player.vertical == 0) {
-                this.player.vertical = -13
-                this.player.jump = true
+                this.player.vertical = -13;
+                this.player.jump = true;
             }
         }
         if(e.keyCode == 40) {
             if (this.player.jump = true) {
-                this.player.vertical = 10
+                this.player.vertical = 10;
             }
         }
     });
-}
+};
 
 game.prototype.draw = function (context) {
-    this.ui.draw(context)
+    this.gamedesign.draw(context)
     this.player.draw(context)
     this.enemies.forEach(enemy => {
-        enemy.draw(context)
+        enemy.draw(context);
     });
 };
 
@@ -149,31 +149,31 @@ game.prototype.update = function () {
     if (!this.gameOver) {
         //Level cap
         if(this.time > this.level * 500) {
-            this.level++
+            this.level++;
         }
         //Create player enemies
         if (this.enemyTimer < this.enemyRespawn) {
-            this.enemyTimer++
+            this.enemyTimer++;
         } else {
             if (this.level < 3) {
-                this.enemies.push(playerEnemy(this, "ground"))
-            } else if (Math.random() < 0.7) this.enemies.push(playerEnemy(this, "ground"))
-            else this.enemies.push(playerEnemy(this, "air"))
+                this.enemies.push(new playerEnemy(this, "ground"));
+            } else if (Math.random() < 0.7) this.enemies.push(new playerEnemy(this, "ground"));
+            else this.enemies.push(new playerEnemy(this, "air"));
 
-            this.enemyTimer = Math.random() * 50 * (this.level * 0.1 + 1)
+            this.enemyTimer = Math.random() * 50 * (this.level * 0.1 + 1);
         }
         //Update game progress
-        this.player.update()
+        this.player.update();
         this.enemies.forEach(enemy => {
-            enemy.update()
+            enemy.update();
             if (this.checkCollision(this.player, enemy)) {
-                this.gameOver = true
+                this.gameOver = true;
             }
-        })
+        });
         //Clear enemies
         this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
         //Update game time
-        this.time++
+        this.time++;
     }
 };
 
@@ -183,37 +183,51 @@ game.prototype.checkCollision = function (object1, object2) {
         object1.x + object1.width > object2.x &&
         object1.y < object2.y + object2.height &&
         object1.height + object1.y > object2.y
-    )
+    );
 };
 
 const canvas = document.querySelector("#canvas");
-const context = canvas.getContext("2d");
+const contxt = canvas.getContext("2d");
 
 canvas.width = 600;
 canvas.height = 150;
 
-context.save();
+contxt.save();
 
-context.fillStyle = "black";
-context.textAlign = "center";
-context.textBaseline = "middle";
-context.font = `${24}px Helvetica`;
-context.fillText(`Press \"Enter\"" to play`, canvas.width / 2, canvas.height / 2);
+contxt.fillStyle = "black";
+contxt.textAlign = "center";
+contxt.textBaseline = "middle";
+contxt.font = `${24}px Helvetica`;
+contxt.fillText(`Press \"Enter\" to play`, canvas.width / 2, canvas.height / 2);
 
-context.restore();
+contxt.restore();
 
-let newGame = game(canvas.width, canvas.height);
+let newGame = new game(canvas.width, canvas.height);
 let lastTime = 0;
 
 const animate = (timeStamp) => {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    contxt.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!newGame.gameOver) requestAnimationFrame(animate);
 
-    newGame.draw(context);
+    newGame.draw(contxt);
     newGame.update();
 };
 
+window.addEventListener('keydown', (e) => {
+    if(e.keyCode == 13) { 
+        if (newGame.gameRunning == false) {
+            newGame.gameRunning = true;
+            animate(0);
+        } else if (newGame.gameOver) {
+            console.log("gameOver = true");
+            newGame = new game(canvas.width, canvas.height);
+            newGame.gameRunning = true;
+            lastTime = 0;
+            animate(0);
+        }
+    }
+});
