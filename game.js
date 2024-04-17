@@ -1,4 +1,4 @@
-function gameDesign(game) {
+function GameDesign(game) {
     this.color = "black";
     this.fontSize = 12;
     this.fontFamily = "Helvetica";
@@ -9,7 +9,7 @@ function gameDesign(game) {
     this.y = 20;
 };
 
-gameDesign.prototype.draw = function (context) {
+GameDesign.prototype.draw = function (context) {
     context.save();
 
     if (this.game.gameOver) {
@@ -33,7 +33,7 @@ gameDesign.prototype.draw = function (context) {
     context.restore();
 };
 
-function player(game) {
+function Player(game) {
     this.game = game;
 
     this.width = 40;
@@ -46,7 +46,7 @@ function player(game) {
     this.jump = false;
 };
 
-player.prototype.draw = function(context) {
+Player.prototype.draw = function(context) {
         context.save();
 
         context.fillStyle = "black";
@@ -55,7 +55,7 @@ player.prototype.draw = function(context) {
         context.restore();
 };
 
-player.prototype.update = function() {
+Player.prototype.update = function() {
         if (this.jump === true) {
             this.y += this.vertical;
             this.vertical += this.game.gravity;
@@ -67,7 +67,7 @@ player.prototype.update = function() {
         }
 };
 
-function playerEnemy(game, type) {
+function PlayerEnemy(game, type) {
     this.game = game;
 
     this.type = type;
@@ -84,10 +84,10 @@ function playerEnemy(game, type) {
     }
 
     //To move left and right (horizontally)
-    this.horizontal = 7 * (this.game.lvl * 0.2 + 1);
+    this.horizontal = 7 * (this.game.level * 0.2 + 1);
 };
 
-playerEnemy.prototype.draw = function (context) {
+PlayerEnemy.prototype.draw = function (context) {
     context.save();
 
     context.fillStyle = "red";
@@ -96,14 +96,14 @@ playerEnemy.prototype.draw = function (context) {
     context.restore();
 };
 
-playerEnemy.prototype.update = function () {
+PlayerEnemy.prototype.update = function () {
     this.x -= this.horizontal;
     if (this.x + this.width < 0) {
         this.markedForDeletion = true;
     }
 };
 
-function game(width, height) {
+function Game(width, height) {
     this.width = width;
     this.height = height;
 
@@ -112,8 +112,8 @@ function game(width, height) {
     this.level = 1;
     this.keys = [];
 
-    this.gamedesign = new gameDesign(this);
-    this.player = new player(this);
+    this.gamedesign = new GameDesign(this);
+    this.player = new Player(this);
 
     this.enemyTimer = Math.random() * 100;
     this.enemyRespawn = 100;
@@ -130,14 +130,14 @@ function game(width, height) {
             }
         }
         if(e.keyCode == 40) {
-            if (this.player.jump = true) {
+            if (this.player.jump) {
                 this.player.vertical = 10;
             }
         }
     });
 };
 
-game.prototype.draw = function (context) {
+Game.prototype.draw = function (context) {
     this.gamedesign.draw(context)
     this.player.draw(context)
     this.enemies.forEach(enemy => {
@@ -145,10 +145,10 @@ game.prototype.draw = function (context) {
     });
 };
 
-game.prototype.update = function () {
+Game.prototype.update = function () {
     if (!this.gameOver) {
         //Level cap
-        if(this.time > this.level * 500) {
+        if(this.time > this.level * 300) {
             this.level++;
         }
         //Create player enemies
@@ -156,9 +156,9 @@ game.prototype.update = function () {
             this.enemyTimer++;
         } else {
             if (this.level < 3) {
-                this.enemies.push(new playerEnemy(this, "ground"));
-            } else if (Math.random() < 0.7) this.enemies.push(new playerEnemy(this, "ground"));
-            else this.enemies.push(new playerEnemy(this, "air"));
+                this.enemies.push(new PlayerEnemy(this, "ground"));
+            } else if (Math.random() < 0.7) this.enemies.push(new PlayerEnemy(this, "ground"));
+            else this.enemies.push(new PlayerEnemy(this, "air"));
 
             this.enemyTimer = Math.random() * 50 * (this.level * 0.1 + 1);
         }
@@ -177,7 +177,7 @@ game.prototype.update = function () {
     }
 };
 
-game.prototype.checkCollision = function (object1, object2) {
+Game.prototype.checkCollision = function (object1, object2) {
     return (
         object1.x < object2.x + object2.width &&
         object1.x + object1.width > object2.x &&
@@ -187,45 +187,45 @@ game.prototype.checkCollision = function (object1, object2) {
 };
 
 const canvas = document.querySelector("#canvas");
-const contxt = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
 canvas.width = 600;
 canvas.height = 150;
 
-contxt.save();
+ctx.save();
 
-contxt.fillStyle = "black";
-contxt.textAlign = "center";
-contxt.textBaseline = "middle";
-contxt.font = `${24}px Helvetica`;
-contxt.fillText(`Press \"Enter\" to play`, canvas.width / 2, canvas.height / 2);
+ctx.fillStyle = "black";
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+ctx.font = `${24}px Helvetica`;
+ctx.fillText(`Press \"Enter\" to play`, canvas.width / 2, canvas.height / 2);
 
-contxt.restore();
+ctx.restore();
 
-let newGame = new game(canvas.width, canvas.height);
+let game = new Game(canvas.width, canvas.height);
 let lastTime = 0;
 
 const animate = (timeStamp) => {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
 
-    contxt.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (!newGame.gameOver) requestAnimationFrame(animate);
+    if (!game.gameOver) requestAnimationFrame(animate);
 
-    newGame.draw(contxt);
-    newGame.update();
+    game.draw(ctx);
+    game.update();
 };
 
 window.addEventListener('keydown', (e) => {
     if(e.keyCode == 13) { 
-        if (newGame.gameRunning == false) {
-            newGame.gameRunning = true;
+        if (game.gameRunning == false) {
+            game.gameRunning = true;
             animate(0);
-        } else if (newGame.gameOver) {
+        } else if (game.gameOver) {
             console.log("gameOver = true");
-            newGame = new game(canvas.width, canvas.height);
-            newGame.gameRunning = true;
+            game = new Game(canvas.width, canvas.height);
+            game.gameRunning = true;
             lastTime = 0;
             animate(0);
         }
