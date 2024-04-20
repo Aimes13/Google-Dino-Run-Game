@@ -1,7 +1,7 @@
 function GameDesign(game) {
     this.color = "black";
     this.fontSize = 12;
-    this.fontFamily = "Helvetica";
+    this.fontFamily = "Special Elite";
 
     this.game = game;
 
@@ -18,11 +18,11 @@ GameDesign.prototype.draw = function (context) {
 
         context.fillStyle = this.color;
         context.textAlign = "center";
-        context.font = this.fontSize * 2 + "px " + this.fontFamily;
+        context.font = this.fontSize * 2.5 + "px " + this.fontFamily;
         context.fillText("Game Over", this.x, this.y);
-        context.font = this.fontSize + "px " + this.fontFamily;
+        context.font = this.fontSize * 1.3 + "px " + this.fontFamily;
         context.fillText("score: " + this.game.time, this.x, this.y + 20);
-        context.font = this.fontSize * 1.2 + "px " + this.fontFamily;
+        context.font = this.fontSize * 1.7 + "px " + this.fontFamily;
         context.fillText(`Press \"Enter\" to play again`, this.x, this.y + 50);
     } else {
         context.fillStyle = this.color;
@@ -51,7 +51,7 @@ function Player(game) {
 Player.prototype.draw = function(context) {
         context.save();
 
-        context.fillStyle = "black";
+        context.fillStyle = "darkgreen";
         context.fillRect(this.x, this.y, this.width, this.height);
 
         context.restore();
@@ -92,7 +92,7 @@ function PlayerEnemy(game, type) {
 PlayerEnemy.prototype.draw = function (context) {
     context.save();
 
-    context.fillStyle = "red";
+    context.fillStyle = "firebrick";
     context.fillRect(this.x, this.y, this.width, this.height);
 
     context.restore();
