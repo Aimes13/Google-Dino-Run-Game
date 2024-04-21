@@ -105,7 +105,7 @@ playerEnemy.prototype.update = function () {
     }
 };
 
-function game(width, height) {
+function playGame(width, height) {
     this.width = width;
     this.height = height;
 
@@ -139,7 +139,7 @@ function game(width, height) {
     });
 };
 
-game.prototype.draw = function (context) {
+playGame.prototype.draw = function (context) {
     this.gamedesign.draw(context)
     this.player.draw(context)
     this.enemies.forEach(enemy => {
@@ -147,7 +147,7 @@ game.prototype.draw = function (context) {
     });
 };
 
-game.prototype.update = function () {
+playGame.prototype.update = function () {
     if (!this.gameOver) {
         //Level cap
         if(this.time > this.level * 300) {
@@ -179,7 +179,7 @@ game.prototype.update = function () {
     }
 };
 
-game.prototype.checkCollision = function (object1, object2) {
+playGame.prototype.checkCollision = function (object1, object2) {
     return (
         object1.x < object2.x + object2.width &&
         object1.x + object1.width > object2.x &&
@@ -204,7 +204,7 @@ ctx.fillText(`Press \"Enter\" to play`, canvas.width / 2, canvas.height / 2);
 
 ctx.restore();
 
-let game = new game(canvas.width, canvas.height);
+let game = new playGame(canvas.width, canvas.height);
 let lastTime = 0;
 
 const animate = (timeStamp) => {
@@ -226,7 +226,7 @@ window.addEventListener('keydown', (e) => {
             animate(0);
         } else if (game.gameOver) {
             console.log("gameOver = true");
-            game = new game(canvas.width, canvas.height);
+            game = new playGame(canvas.width, canvas.height);
             game.gameRunning = true;
             lastTime = 0;
             animate(0);
