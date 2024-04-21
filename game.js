@@ -1,4 +1,4 @@
-function GameDesign(game) {
+function gameDesign(game) {
     this.color = "black";
     this.fontSize = 12;
     this.fontFamily = "Special Elite";
@@ -9,7 +9,7 @@ function GameDesign(game) {
     this.y = 20;
 };
 
-GameDesign.prototype.draw = function (context) {
+gameDesign.prototype.draw = function (context) {
     context.save();
 
     if (this.game.gameOver) {
@@ -35,7 +35,7 @@ GameDesign.prototype.draw = function (context) {
     context.restore();
 };
 
-function Player(game) {
+function player(game) {
     this.game = game;
 
     this.width = 40;
@@ -48,7 +48,7 @@ function Player(game) {
     this.jump = false;
 };
 
-Player.prototype.draw = function(context) {
+player.prototype.draw = function(context) {
         context.save();
 
         context.fillStyle = "darkgreen";
@@ -57,7 +57,7 @@ Player.prototype.draw = function(context) {
         context.restore();
 };
 
-Player.prototype.update = function() {
+player.prototype.update = function() {
         if (this.jump === true) {
             this.y += this.vertical;
             this.vertical += this.game.gravity;
@@ -69,7 +69,7 @@ Player.prototype.update = function() {
         }
 };
 
-function PlayerEnemy(game, type) {
+function playerEnemy(game, type) {
     this.game = game;
 
     this.type = type;
@@ -89,7 +89,7 @@ function PlayerEnemy(game, type) {
     this.horizontal = 7 * (this.game.level * 0.2 + 1);
 };
 
-PlayerEnemy.prototype.draw = function (context) {
+playerEnemy.prototype.draw = function (context) {
     context.save();
 
     context.fillStyle = "firebrick";
@@ -98,14 +98,14 @@ PlayerEnemy.prototype.draw = function (context) {
     context.restore();
 };
 
-PlayerEnemy.prototype.update = function () {
+playerEnemy.prototype.update = function () {
     this.x -= this.horizontal;
     if (this.x + this.width < 0) {
         this.markedForDeletion = true;
     }
 };
 
-function Game(width, height) {
+function game(width, height) {
     this.width = width;
     this.height = height;
 
@@ -114,8 +114,8 @@ function Game(width, height) {
     this.level = 1;
     this.keys = [];
 
-    this.gamedesign = new GameDesign(this);
-    this.player = new Player(this);
+    this.gamedesign = new gameDesign(this);
+    this.player = new player(this);
 
     this.enemyTimer = Math.random() * 100;
     this.enemyRespawn = 100;
@@ -139,7 +139,7 @@ function Game(width, height) {
     });
 };
 
-Game.prototype.draw = function (context) {
+game.prototype.draw = function (context) {
     this.gamedesign.draw(context)
     this.player.draw(context)
     this.enemies.forEach(enemy => {
@@ -147,7 +147,7 @@ Game.prototype.draw = function (context) {
     });
 };
 
-Game.prototype.update = function () {
+game.prototype.update = function () {
     if (!this.gameOver) {
         //Level cap
         if(this.time > this.level * 300) {
@@ -158,9 +158,9 @@ Game.prototype.update = function () {
             this.enemyTimer++;
         } else {
             if (this.level < 3) {
-                this.enemies.push(new PlayerEnemy(this, "ground"));
-            } else if (Math.random() < 0.7) this.enemies.push(new PlayerEnemy(this, "ground"));
-            else this.enemies.push(new PlayerEnemy(this, "air"));
+                this.enemies.push(new playerEnemy(this, "ground"));
+            } else if (Math.random() < 0.7) this.enemies.push(new playerEnemy(this, "ground"));
+            else this.enemies.push(new playerEnemy(this, "air"));
 
             this.enemyTimer = Math.random() * 50 * (this.level * 0.1 + 1);
         }
@@ -179,7 +179,7 @@ Game.prototype.update = function () {
     }
 };
 
-Game.prototype.checkCollision = function (object1, object2) {
+game.prototype.checkCollision = function (object1, object2) {
     return (
         object1.x < object2.x + object2.width &&
         object1.x + object1.width > object2.x &&
@@ -204,7 +204,7 @@ ctx.fillText(`Press \"Enter\" to play`, canvas.width / 2, canvas.height / 2);
 
 ctx.restore();
 
-let game = new Game(canvas.width, canvas.height);
+let game = new game(canvas.width, canvas.height);
 let lastTime = 0;
 
 const animate = (timeStamp) => {
@@ -226,7 +226,7 @@ window.addEventListener('keydown', (e) => {
             animate(0);
         } else if (game.gameOver) {
             console.log("gameOver = true");
-            game = new Game(canvas.width, canvas.height);
+            game = new game(canvas.width, canvas.height);
             game.gameRunning = true;
             lastTime = 0;
             animate(0);
