@@ -5,9 +5,9 @@ canvas.height = 250;
 let lastTime = 0;
 let deltaTime;
 const CACTI_CONFIG = [
-  { width: 50 / 1.5, height: 60 / 1.5, image: "images/cactus_1.png" },
-  { width: 70 / 1.5, height: 60 / 1.5, image: "images/cactus_2.png" },
-  { width: 50 / 1.5, height: 50 / 1.5, image: "images/cactus_3.png" },
+  { width: 70 / 1.5, height: 80 / 1.5, image: "images/cactus_1.png" },
+  { width: 90 / 1.5, height: 80 / 1.5, image: "images/cactus_2.png" },
+  { width: 70 / 1.5, height: 70 / 1.5, image: "images/cactus_3.png" },
 ];
 
 function gameDesign(game) {
@@ -50,8 +50,8 @@ gameDesign.prototype.draw = function (context) {
 function player(game) {
   this.game = game;
 
-  this.width = 40;
-  this.height = 40;
+  this.width = 85;
+  this.height = 85;
 
   this.x = 40;
   this.y = game.height - this.height;
@@ -95,7 +95,7 @@ function playerEnemy(game, type, image, cactusWidth, cactusHeight) {
   }
 
   //To move left and right (horizontally)
-  this.horizontal = 7 * (this.game.level * 0.2 + 1);
+  this.horizontal = 7 * (this.game.level * 0.1 + 2);
 }
 
 playerEnemy.prototype.draw = function (context) {
